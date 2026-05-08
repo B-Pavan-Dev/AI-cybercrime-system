@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybercrime Complaint System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <h1>Cybercrime Complaint System</h1>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </header>
+
+    <main class="card">
+        <h2>Submit Your Complaint</h2>
+
+        <form id="complaint-form" class="complaint-form">
+            <div class="form-group">
+                <label for="complaint-text" class="form-label">
+                    Describe your cybercrime issue in detail:
+                </label>
+                <textarea id="complaint-text" name="complaint"
+                    placeholder="Please provide as much detail as possible..."
+                    required></textarea>
+            </div>
+
+            <!--  Voice Button -->
+            <button type="button" onclick="startVoice()">🎤 Speak</button>
+
+            <button type="submit" class="submit-btn">Submit Complaint</button>
+        </form>
+
+        <div id="result" class="result-container"></div>
+    </main>
+
+    <!--  CHATBOT (INSIDE CONTAINER NOW) -->
+    <div class="chatbot">
+        <h3> AI Assistant</h3>
+
+        <div id="chat-box" class="chat-box"></div>
+
+        <input type="text" id="user-input" placeholder="Ask something...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+</div>
+
+<script>
+// =======================
+// FORM SUBMIT
+// =======================
+document.getElementById("complaint-form").onsubmit = async (e) => {
+    e.preventDefault();
+
+    const submitBtn = e.target.querySelector('.submit-btn');
+    const originalText = submitBtn.textContent;
+
+    submitBtn.textContent = 'Analyzing...';
+    submitBtn.disabled = true;
+
+    try {
+        let formData = new FormData(e.target);
+
+        let res = await fetch("/submit", {
+            method: "POST",
+            body: formData,
+            credentials: 'same-origin'
+        });
+
+        let data = await res.json();
+
+        if (!res.ok || data.error) {
+            throw new Error(data.error || "Server error");
+        }
+
+        const priorityClass = data.priority.toLowerCase();
+
+        document.getElementById("result").innerHTML = `
+            <div class="result-box ${priorityClass}">
+
+                <h3> Complaint Analysis Results</h3>
+
+                <p><strong>Category:</strong> ${data.category}</p>
+                <p><strong>Priority:</strong> ${data.priority}</p>
+                <p><strong>Confidence:</strong> ${data.confidence}%</p>
+
+                <p><strong> Keywords:</strong> 
+                    ${data.keywords.length ? data.keywords.join(", ") : "None"}
+                </p>
+
+                <p><strong>Problem:</strong> ${data.response.problem}</p>
+
+                <h4> Immediate Actions</h4>
+                <ul>${data.response.immediate.map(i => `<li>${i}</li>`).join("")}</ul>
+
+                <h4>Next Steps</h4>
+                <ul>${data.response.next_steps.map(i => `<li>${i}</li>`).join("")}</ul>
+
+                <h4> Prevention</h4>
+                <ul>${data.response.prevention.map(i => `<li>${i}</li>`).join("")}</ul>
+
+                ${data.priority === "High" ? 
+                    "<p style='color:red;font-weight:bold;'>⚠ Immediate Attention Required</p>" 
+                    : ""}
+            </div>
+        `;
+
+    } catch (error) {
+        document.getElementById("result").innerHTML = `
+            <div class="result-box error">
+                 ${error.message}
+            </div>
+        `;
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+};
+
+
+// =======================
+// CHATBOT FUNCTION
+// =======================
+function sendMessage() {
+    let input = document.getElementById("user-input").value.toLowerCase();
+
+    let response = "I'm not sure. Please submit complaint.";
+
+    if (input.includes("hacked")) {
+        response = "Change your password immediately and enable 2FA.";
+    } else if (input.includes("otp")) {
+        response = "Never share OTP with anyone.";
+    } else if (input.includes("call")) {
+        response = "Block unknown numbers and report spam.";
+    }
+
+    let chatBox = document.getElementById("chat-box");
+
+    chatBox.innerHTML += `<p><b>You:</b> ${input}</p>`;
+    chatBox.innerHTML += `<p><b>Bot:</b> ${response}</p>`;
+
+    document.getElementById("user-input").value = "";
+}
+
+
+// =======================
+//  VOICE INPUT
+// =======================
+function startVoice() {
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = "en-IN";
+
+    recognition.onresult = function(event) {
+        document.getElementById("complaint-text").value =
+            event.results[0][0].transcript;
+    };
+
+    recognition.start();
+}
+
+</script>
+
+</body>
+</html>
