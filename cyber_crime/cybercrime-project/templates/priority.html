@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Priority Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .high {
+            border-left: 6px solid red;
+        }
+
+        .medium {
+            border-left: 6px solid orange;
+        }
+
+        .low {
+            border-left: 6px solid green;
+        }
+
+        .priority {
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🚨 Priority Complaint Dashboard</h1>
+
+<a href="/dashboard" class="btn">← Back to Dashboard</a>
+
+{% for row in data %}
+
+<div class="card {{ row[3]|lower }}">
+    <p><strong>ID:</strong> {{ row[0] }}</p>
+    <p><strong>Complaint:</strong> {{ row[1] }}</p>
+    <p><strong>Category:</strong> {{ row[2] }}</p>
+
+    <p class="priority">
+        Priority: {{ row[3] }}
+    </p>
+
+    <p><strong>Date:</strong> {{ row[4] }}</p>
+</div>
+
+{% endfor %}
+
+</body>
+</html>

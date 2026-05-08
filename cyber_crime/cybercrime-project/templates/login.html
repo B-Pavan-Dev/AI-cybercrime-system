@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Cybercrime System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <h1>Cybercrime Complaint System</h1>
+    </header>
+
+    <div class="card auth-card">
+        <h2>Login to Your Account</h2>
+        {% if message %}
+            <div class="message">{{ message }}</div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" name="username" placeholder="Enter your username" value="{{ username|default('') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="auth-btn">Login</button>
+        </form>
+
+        <p class="small-text">Don't have an account? <a href="/register">Create one</a></p>
+    </div>
+</div>
+
+</body>
+</html>

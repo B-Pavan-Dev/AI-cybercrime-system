@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Admin Dashboard</h1>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="summary-cards">
+        <div class="summary-card high">
+            <h3>High Priority</h3>
+            <p>{{ counts.High }}</p>
+        </div>
+        <div class="summary-card medium">
+            <h3>Medium Priority</h3>
+            <p>{{ counts.Medium }}</p>
+        </div>
+        <div class="summary-card low">
+            <h3>Low Priority</h3>
+            <p>{{ counts.Low }}</p>
+        </div>
+        <div class="summary-card total">
+            <h3>Total Complaints</h3>
+            <p>{{ counts.Total }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Complaints by Priority</h2>
+
+        {% for priority, rows in priorities.items() %}
+            <div class="priority-group">
+                <h3>{{ priority }} Priority ({{ rows | length }})</h3>
+                {% if rows %}
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Text</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                        </tr>
+                        {% for row in rows %}
+                        <tr>
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                            <td>{{ row[2] }}</td>
+                            <td>{{ row[3] }}</td>
+                            <td>{{ row[4] }}</td>
+                            <td>{{ row[5] }}</td>
+                            <td>{{ row[7] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>No {{ priority }} priority complaints found.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+</body>
+</html>
