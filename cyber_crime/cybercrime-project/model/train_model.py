@@ -5,7 +5,7 @@ import pickle
 import os
 
 # Load dataset
-df = pd.read_csv("cybercrime_nlp_formatted.csv")
+df = pd.read_csv("cybercrime_final_dataset.csv")
 
 # Features and labels
 X_text = df["text"]
